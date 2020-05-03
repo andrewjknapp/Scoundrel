@@ -94,21 +94,16 @@ function leaveRoom(deck, leaveRoom) {
     console.log(deck);
 }
 
+function takeCard(deck, room, card) {
+    
+}
+
 function game() {
     let deck = shuffleCards(cards);
     let weapon = null;
     let HP = 20;
     let prevCard = null;
-    let room = makeRoom(deck);
-    console.log(room);
-    leaveRoom(deck, room);
-    // while (deck.length > 0) {
-    //     console.log(prevCard);
-    //     let room = makeRoom(deck, prevCard);
-    //     console.log(room);
 
-    //     prevCard = room[3];
-    // }
 }
 
 game();
