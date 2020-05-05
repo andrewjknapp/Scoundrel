@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import { cards } from "../assets/cards";
 
 function Board() {
-    const [ HP, setHP ] = useState(20);
-    const [weapon, setWeapon ] = useState("none");
-    const [ card, setCard ] = useState("heart_1");
-    const [ lose, setLose ] = useState(false);
-    const [ deck, setDeck ] = useState([]);
-    const [ room, setRoom ] = useState([]);
+
+    const [ data, setData ] = useState({
+        HP: 20,
+        weapon: "none",
+        card: "heart_1",
+        lastSlain: "none",
+        lose: false,
+        deck: [],
+        room: []
+    })
 
     // Done once at the start of the game. 
     // Input: Object containing all possible cards
@@ -40,7 +44,12 @@ function Board() {
             }
             room.push(currentCard);
         }
-        setDeck(deck);
+        
+        setData({
+            ...data,
+            room: room,
+            deck: deck
+        })
         return room;
     }
 
@@ -49,9 +58,7 @@ function Board() {
     // Input: remaining cards from shuffled deck and room to be left
     // Output: none 
     function leaveRoom(deck, leaveRoom) {
-        console.log(deck);
         deck.push(...leaveRoom);
-        console.log(deck);
     }
 
     // Called when player chooses a card from the current room
@@ -61,58 +68,78 @@ function Board() {
     function takeCard(card) {
         const type = card.substring(0, card.indexOf("_"));
         const number = Number(card.substring(card.indexOf("_") + 1));
-        console.log(number);
+        let newHP = data.HP;
+        let weapon = data.weapon;
+        let lastSlain = data.lastSlain;
+        
         if (type === "heart") {
-            let newHP;
-            if (HP + number > 20) {
+            if (data.HP + number > 20) {
                 newHP = 20;
             } else {
-                newHP = HP + number;
+                newHP += number;
             }
-            setHP(newHP);
         } else if (type === "diamond") {
 
-            setWeapon(card);
+            weapon = card;
+            lastSlain = "none";
 
         } else if (type === "spade" || type === "club") {
             let defense = 0;
             if (weapon !== "none") {
                 defense = Number(weapon.substring(weapon.indexOf("_") + 1));
             }
+
+            if (lastSlain !== "none" && Math.abs(cards[lastSlain]) < defense ) {
+                defense = Math.abs(cards[lastSlain]);
+            }
+
             let damage = defense - number;
+            console.log(damage);
             if (damage > 0) {
                 damage = 0;
             }
-            let newHP = HP + damage;
+            newHP += damage;
 
             if (newHP <= 0) {
                 newHP = 0;
             }
 
-            setHP(newHP);
+            if (weapon !== "none") {
+                lastSlain = card;
+            }
         }
+
+        setData({
+            ...data,
+            HP: newHP,
+            weapon: weapon,
+            lastSlain: lastSlain
+        })
     }
+    useEffect(() => {
+        takeCard(data.card);
+    }, [data.card])
 
     useEffect(() => {
         let shuffled = shuffleCards(cards); 
-        setDeck(shuffled);
-        console.log(shuffled);
+        setData({
+            ...data,
+            deck: shuffled
+        })
     }, [])
 
-    useEffect(() => {
-        takeCard(card);
-    }, [card])
-    console.log(deck);
+    let { HP, weapon, deck, lose, room, lastSlain } = data;
+    console.log(data);
     return (
         <main>
-            <h1>The party is here</h1>
             <p>Health: {HP}</p>
             <p>Weapon: {weapon}</p>
+            <p>Last Slain: {lastSlain}</p>
             {lose ? <p>YOU LOSE</p> : null}
-            <button onClick={()=>setCard(deck[0])}>{deck[0]}</button>
-            <button onClick={()=>setCard(deck[1])}>{deck[1]}</button>
-            <button onClick={()=>setCard(deck[2])}>{deck[2]}</button>
-            <button onClick={()=>setCard(deck[3])}>{deck[3]}</button>
+            <button onClick={()=>setData({...data, card: deck[0]})}>{deck[0]}</button>
+            <button onClick={()=>setData({...data, card: deck[1]})}>{deck[1]}</button>
+            <button onClick={()=>setData({...data, card: deck[2]})}>{deck[2]}</button>
+            <button onClick={()=>setData({...data, card: deck[3]})}>{deck[3]}</button>
             <button onClick={()=>makeRoom(deck)}>Next Room</button>
             <h1>{deck[0]}</h1>
         </main>
