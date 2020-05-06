@@ -122,8 +122,10 @@ function Board() {
 
     useEffect(() => {
         let shuffled = shuffleCards(cards); 
+        let firstRoom = [shuffled[0], shuffled[1], shuffled[2], shuffled[3]];
         setData({
             ...data,
+            room: firstRoom,
             deck: shuffled
         })
     }, [])
