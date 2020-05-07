@@ -8,10 +8,10 @@ function Board() {
         weapon: "none",
         card: "heart_1",
         lastSlain: "none",
-        lose: false,
         deck: [],
         room: [],
-        hasHealed: false
+        hasHealed: false,
+        hasRan: false
     })
 
     // Done once at the start of the game. 
@@ -52,7 +52,8 @@ function Board() {
             ...data,
             room: room,
             deck: deck,
-            hasHealed: false
+            hasHealed: false,
+            hasRan: false
         })
         return room;
     }
@@ -62,7 +63,16 @@ function Board() {
     // Input: remaining cards from shuffled deck and room to be left
     // Output: none 
     function leaveRoom(deck, leaveRoom) {
-        deck.push(...leaveRoom);
+        deck.splice(0, 4);
+    
+        deck.concat(leaveRoom);
+        let newRoom = deck.slice(0,4);
+        setData({
+            ...data,
+            deck: deck,
+            room: newRoom,
+            hasRan: true
+        })
     }
 
     // Called when player chooses a card from the current room
@@ -150,16 +160,16 @@ function Board() {
         })
     }, [])
 
-    let { HP, weapon, deck, lose, room, lastSlain } = data;
+    let { HP, weapon, deck, room, lastSlain, hasRan } = data;
     return (
         <main>
             <p>Health: {HP}</p>
             <p>Weapon: {weapon}</p>
             <p>Last Slain: {lastSlain}</p>
-            {lose ? <p>YOU LOSE</p> : null}
+            {HP <= 0 ? <p>YOU LOSE</p> : null}
             {room.map((element, i) => <button key={i} onClick={()=>updateRoom(element, room)}>{element}</button>)}
             { room.length === 1 ? <button onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
-            <h1>{deck[0]}</h1>
+            { !hasRan && room.length === 4 ? <button onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
         </main>
     )
 }
