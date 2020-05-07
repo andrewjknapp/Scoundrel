@@ -8,9 +8,10 @@ function Board() {
         weapon: "none",
         card: "heart_1",
         lastSlain: "none",
-        lose: false,
         deck: [],
-        room: []
+        room: [],
+        hasHealed: false,
+        hasRan: false
     })
 
     // Done once at the start of the game. 
@@ -34,21 +35,25 @@ function Board() {
     // Output: current room
     function makeRoom(deck, prevCard = null) {
         let room = [];
-        if (prevCard !== null) {
-            room.push(prevCard);
-        }
-        while (room.length < 4) {
-            let currentCard = deck.shift();
-            if(currentCard === undefined) {
-                break;
+        // if (prevCard !== null) {
+        //     room.push(prevCard);
+        // }
+        let shift = 0;
+        for ( let i = 0; i < 4; i++) {
+            if (deck[shift] === prevCard) {
+                shift++;
+            } else {
+                deck.splice(shift, 1);
             }
-            room.push(currentCard);
         }
+        room = [deck[0], deck[1], deck[2], deck[3]];
         
         setData({
             ...data,
             room: room,
-            deck: deck
+            deck: deck,
+            hasHealed: false,
+            hasRan: false
         })
         return room;
     }
@@ -58,7 +63,16 @@ function Board() {
     // Input: remaining cards from shuffled deck and room to be left
     // Output: none 
     function leaveRoom(deck, leaveRoom) {
-        deck.push(...leaveRoom);
+        deck.splice(0, 4);
+    
+        deck.concat(leaveRoom);
+        let newRoom = deck.slice(0,4);
+        setData({
+            ...data,
+            deck: deck,
+            room: newRoom,
+            hasRan: true
+        })
     }
 
     // Called when player chooses a card from the current room
@@ -71,8 +85,10 @@ function Board() {
         let newHP = data.HP;
         let weapon = data.weapon;
         let lastSlain = data.lastSlain;
+        let hasHealed = data.hasHealed;
         
-        if (type === "heart") {
+        if (type === "heart" && hasHealed === false) {
+            hasHealed = true;
             if (data.HP + number > 20) {
                 newHP = 20;
             } else {
@@ -94,7 +110,7 @@ function Board() {
             }
 
             let damage = defense - number;
-            console.log(damage);
+            
             if (damage > 0) {
                 damage = 0;
             }
@@ -113,9 +129,23 @@ function Board() {
             ...data,
             HP: newHP,
             weapon: weapon,
-            lastSlain: lastSlain
+            lastSlain: lastSlain,
+            hasHealed: hasHealed
         })
     }
+
+    function updateRoom(card, room) {
+        if (room.length > 1) {
+            let index = room.indexOf(card); 
+            room.splice(index, 1);
+            setData({
+                ...data,
+                card: card,
+                room: room
+            })
+        }
+    }
+
     useEffect(() => {
         takeCard(data.card);
     }, [data.card])
@@ -130,20 +160,16 @@ function Board() {
         })
     }, [])
 
-    let { HP, weapon, deck, lose, room, lastSlain } = data;
-    console.log(data);
+    let { HP, weapon, deck, room, lastSlain, hasRan } = data;
     return (
         <main>
             <p>Health: {HP}</p>
             <p>Weapon: {weapon}</p>
             <p>Last Slain: {lastSlain}</p>
-            {lose ? <p>YOU LOSE</p> : null}
-            <button onClick={()=>setData({...data, card: deck[0]})}>{deck[0]}</button>
-            <button onClick={()=>setData({...data, card: deck[1]})}>{deck[1]}</button>
-            <button onClick={()=>setData({...data, card: deck[2]})}>{deck[2]}</button>
-            <button onClick={()=>setData({...data, card: deck[3]})}>{deck[3]}</button>
-            <button onClick={()=>makeRoom(deck)}>Next Room</button>
-            <h1>{deck[0]}</h1>
+            {HP <= 0 ? <p>YOU LOSE</p> : null}
+            {room.map((element, i) => <button key={i} onClick={()=>updateRoom(element, room)}>{element}</button>)}
+            { room.length === 1 ? <button onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
+            { !hasRan && room.length === 4 ? <button onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
         </main>
     )
 }
