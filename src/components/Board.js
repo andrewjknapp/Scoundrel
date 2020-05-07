@@ -191,7 +191,9 @@ function Board() {
                 <p>Health: {HP}</p>
                 <p>Weapon: {weapon}</p>
                 <p>Last Slain: {lastSlain}</p>
-                {room.map((element, i) => <section className="card" key={i} onClick={()=>updateRoom(element, room)}>{element}</section>)}
+                <article className="cardContainer">
+                    {room.map((element, i) => <section className="card" key={i} onClick={()=>updateRoom(element, room)}>{element}</section>)}
+                </article>
                 { room.length === 1 ? <button onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
                 { !hasRan && room.length === 4 ? <button onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
             </main>
