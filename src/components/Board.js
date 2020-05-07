@@ -6,7 +6,7 @@ function Board() {
     const [ data, setData ] = useState({
         HP: 20,
         weapon: "none",
-        card: "heart_1",
+        card: "none",
         lastSlain: "none",
         deck: [],
         room: [],
@@ -146,13 +146,28 @@ function Board() {
         }
     }
 
+    function resetGame() {
+        let shuffled = shuffleCards(cards); 
+        let firstRoom = shuffled.slice(0, 4);
+        setData({
+            HP: 20,
+            weapon: "none",
+            card: "none",
+            lastSlain: "none",
+            deck: shuffled,
+            room: firstRoom,
+            hasHealed: false,
+            hasRan: false
+        })
+    }
+
     useEffect(() => {
         takeCard(data.card);
     }, [data.card])
 
     useEffect(() => {
         let shuffled = shuffleCards(cards); 
-        let firstRoom = [shuffled[0], shuffled[1], shuffled[2], shuffled[3]];
+        let firstRoom = shuffled.slice(0, 4);
         setData({
             ...data,
             room: firstRoom,
@@ -161,17 +176,26 @@ function Board() {
     }, [])
 
     let { HP, weapon, deck, room, lastSlain, hasRan } = data;
-    return (
-        <main>
-            <p>Health: {HP}</p>
-            <p>Weapon: {weapon}</p>
-            <p>Last Slain: {lastSlain}</p>
-            {HP <= 0 ? <p>YOU LOSE</p> : null}
-            {room.map((element, i) => <button key={i} onClick={()=>updateRoom(element, room)}>{element}</button>)}
-            { room.length === 1 ? <button onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
-            { !hasRan && room.length === 4 ? <button onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
-        </main>
-    )
+
+    if (HP <= 0) {
+        return (
+            <main>
+                <p>YOU LOSE</p>
+                <button onClick={()=>resetGame()}>Play Again?</button>
+            </main>
+        )
+    } else {
+        return (
+            <main>
+                <p>Health: {HP}</p>
+                <p>Weapon: {weapon}</p>
+                <p>Last Slain: {lastSlain}</p>
+                {room.map((element, i) => <button key={i} onClick={()=>updateRoom(element, room)}>{element}</button>)}
+                { room.length === 1 ? <button onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
+                { !hasRan && room.length === 4 ? <button onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
+            </main>
+        )
+    }
 }
 
 export default Board;
