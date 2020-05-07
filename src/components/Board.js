@@ -192,7 +192,10 @@ function Board() {
                 <p>Weapon: {weapon}</p>
                 <p>Last Slain: {lastSlain}</p>
                 <article className="cardContainer">
-                    {room.map((element, i) => <section className="card" key={i} onClick={()=>updateRoom(element, room)}>{element}</section>)}
+                    {room.map((element, i) => <section className="card" style={{backgroundImage: `url(${require(`../assets/card_images/${element}.png`)})`}} key={i} onClick={()=>updateRoom(element, room)}></section>)}
+                </article>
+                <article>
+                      
                 </article>
                 { room.length === 1 ? <button onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
                 { !hasRan && room.length === 4 ? <button onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
