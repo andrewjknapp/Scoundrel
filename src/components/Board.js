@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { cards } from "../assets/cards";
+import "../assets/css/board.css";
 
 function Board() {
 
@@ -190,7 +191,7 @@ function Board() {
                 <p>Health: {HP}</p>
                 <p>Weapon: {weapon}</p>
                 <p>Last Slain: {lastSlain}</p>
-                {room.map((element, i) => <button key={i} onClick={()=>updateRoom(element, room)}>{element}</button>)}
+                {room.map((element, i) => <section className="card" key={i} onClick={()=>updateRoom(element, room)}>{element}</section>)}
                 { room.length === 1 ? <button onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
                 { !hasRan && room.length === 4 ? <button onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
             </main>
