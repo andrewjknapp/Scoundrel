@@ -1,0 +1,16 @@
+.card, .nonRoomCard {
+    width: 20%;
+    min-width: 75px;
+    min-height: 300px;
+    background-position: top;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.card {
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
