@@ -48,7 +48,15 @@ function Board() {
                 deck.splice(shift, 1);
             }
         }
-        room = [deck[0], deck[1], deck[2], deck[3]];
+
+        for ( let i = 0; i < 4; i++) {
+            if (deck[i] === undefined) {
+                break;
+            } else {
+                room.push(deck[i]);
+            }
+        }
+       
         
         setData({
             ...data,
@@ -67,7 +75,8 @@ function Board() {
     function leaveRoom(deck, leaveRoom) {
         deck.splice(0, 4);
     
-        deck.concat(leaveRoom);
+        deck = deck.concat(leaveRoom);
+        console.log(leaveRoom)
         let newRoom = deck.slice(0,4);
         setData({
             ...data,
@@ -137,7 +146,7 @@ function Board() {
     }
 
     function updateRoom(card, room) {
-        if (room.length > 1) {
+        if (room.length > 1 || deck.length < 4) {
             let index = room.indexOf(card); 
             room.splice(index, 1);
             setData({
@@ -170,6 +179,7 @@ function Board() {
     useEffect(() => {
         let shuffled = shuffleCards(cards); 
         let firstRoom = shuffled.slice(0, 4);
+        let test = ["heart_2", "club_2", "diamond_2", "spade_2", "heart_3"];
         setData({
             ...data,
             room: firstRoom,
@@ -178,11 +188,19 @@ function Board() {
     }, [])
 
     let { HP, weapon, deck, room, lastSlain, hasRan } = data;
-
+    console.log(deck);
     if (HP <= 0) {
         return (
             <main>
                 <p>YOU LOSE</p>
+                <button onClick={()=>resetGame()}>Play Again?</button>
+            </main>
+        )
+    } else if (room.length < 1) {
+        return (
+            <main>
+                <h1>You Win!</h1>
+                <p>Score: {HP}</p>
                 <button onClick={()=>resetGame()}>Play Again?</button>
             </main>
         )
@@ -193,7 +211,7 @@ function Board() {
                 <p className="healthIndicator">
                     Health: {HP}
                     { !hasRan && room.length === 4 ? <button className="runAway" onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
-                    { room.length === 1 ? <button className="nextRoom" onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
+                    { room.length === 1 && deck.length > 4 ? <button className="nextRoom" onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
                 </p>
                 <article className="cardContainer">
                     {room.map((element, i) => <Card card={element} room={room} updateRoom={updateRoom} key={i} isRoom={true}/>)}
