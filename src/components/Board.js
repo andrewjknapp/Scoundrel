@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { cards } from "../assets/cards";
 import "../assets/css/board.css";
+import { Card } from "./Card";
 
 function Board() {
 
@@ -188,17 +189,19 @@ function Board() {
     } else {
         return (
             <main>
-                <p>Health: {HP}</p>
-                <p>Weapon: {weapon}</p>
-                <p>Last Slain: {lastSlain}</p>
+                <p>Cards left: {deck.length - room.length}</p>
+                <p className="healthIndicator">
+                    Health: {HP}
+                    { !hasRan && room.length === 4 ? <button className="runAway" onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
+                    { room.length === 1 ? <button className="nextRoom" onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
+                </p>
                 <article className="cardContainer">
-                    {room.map((element, i) => <section className="card" style={{backgroundImage: `url(${require(`../assets/card_images/${element}.png`)})`}} key={i} onClick={()=>updateRoom(element, room)}></section>)}
+                    {room.map((element, i) => <Card card={element} room={room} updateRoom={updateRoom} key={i} isRoom={true}/>)}
                 </article>
-                <article>
-                      
+                <article className="cardContainer">
+                    <p>Weapon: <Card card={weapon} isRoom={false}/></p>
+                    <p>Last Slain: <Card card={lastSlain} isRoom={false}/></p> 
                 </article>
-                { room.length === 1 ? <button onClick={()=>makeRoom(deck, room[0])}>Next Room</button> : null}
-                { !hasRan && room.length === 4 ? <button onClick={()=>leaveRoom(deck, room)}>Run Away</button> : null}
             </main>
         )
     }
