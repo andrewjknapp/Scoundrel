@@ -225,4 +225,4 @@ function Board() {
     }
 }
 
-export default Board;
+export { Board };

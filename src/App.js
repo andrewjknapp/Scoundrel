@@ -1,9 +1,21 @@
 import React from 'react';
-import Board from './components/Board';
+import { Board } from './components/Board';
+import { BrowserRouter as Router, Switch, Route} from "react-router-dom";
+import { HomeScreen } from './components/HomeScreen';
+import { Tutorial } from './components/Tutorial';
 
 function App() {
   return (
-    <Board/>
+    <Router>
+      <Switch>
+        <Route exact path="/game" component={Board}/>
+          
+        <Route exact path="/tutorial" component={Tutorial}/>
+
+        <Route path="/" component={HomeScreen}/>
+
+      </Switch>
+    </Router>
   );
 }
 
