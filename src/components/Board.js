@@ -86,6 +86,32 @@ function Board() {
         })
     }
 
+    // Used for sound effects in game.
+    // Input: suit of card as a string
+    // Output: none
+    // Defaults to the sword sound effect so that undefined does not break the game
+    function makeSound(suit) {
+        let soundType;
+        switch (suit) {
+            case "diamond":
+                soundType = "sword.flac";
+                break;
+            case "heart":
+                soundType = "health.wav";
+                break;
+            case "spade":
+                soundType = "bone.wav";
+                break;
+            case "club":
+                soundType = "eye.mp3";
+                break;
+            default:
+                soundType = "sword.flac";
+                break;
+        }
+        new Audio(require("../assets/sounds/" + soundType)).play()
+    }
+
     // Called when player chooses a card from the current room
     // Input: Card that is chosen from the room
     // Output: none
@@ -104,12 +130,13 @@ function Board() {
                 newHP = 20;
             } else {
                 newHP += number;
+                makeSound(type);
             }
         } else if (type === "diamond") {
 
             weapon = card;
             lastSlain = "none";
-
+            makeSound(type);
         } else if (type === "spade" || type === "club") {
             let defense = 0;
             if (weapon !== "none") {
@@ -134,6 +161,7 @@ function Board() {
             if (weapon !== "none") {
                 lastSlain = card;
             }
+            makeSound(type);
         }
 
         setData({
