@@ -9,8 +9,19 @@
 
 .card {
     cursor: pointer;
+    animation: cardWiggle;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
 }
 
 .card:hover {
     transform: scale(1.05);
+}
+
+@keyframes cardWiggle {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(2deg); }
+    35% { transform: rotate(0deg); }
+    80% { transform: rotate(0deg); }
+    90% { transform: rotate(1deg); }
 }

@@ -218,13 +218,12 @@ function Board() {
 
     let { HP, weapon, deck, room, lastSlain, hasRan } = data;
     console.log(deck);
-    room = [];
     if (HP <= 0) {
         return (
             <main className="result">
                 <h1>YOU LOSE</h1>
                 <button onClick={()=>resetGame()}>Play Again?</button>
-                <Link to="/"><p>Main Menu</p></Link>
+                <p className="menuLink"><Link to="/">Main Menu</Link></p>
             </main>
         )
     } else if (room.length < 1) {
@@ -233,12 +232,12 @@ function Board() {
                 <h1>You Win!</h1>
                 <p>Score: {HP}</p>
                 <button onClick={()=>resetGame()}>Play Again?</button>
-                <Link to="/"><p>Main Menu</p></Link>
+                <p className="menuLink"><Link to="/">Main Menu</Link></p>
             </main>
         )
     } else {
         return (
-            <main>
+            <main className="boardBackground">
                 <p>Cards left: {deck.length - room.length}</p>
                 <p className="healthIndicator">
                     Health: {HP}
@@ -251,6 +250,9 @@ function Board() {
                 <article className="cardContainer">
                     <p>Weapon: <Card card={weapon} isRoom={false}/></p>
                     <p>Last Slain: <Card card={lastSlain} isRoom={false}/></p> 
+                </article>
+                <article>
+                    <p className="menuLink"><Link to="/">Main Menu</Link></p>
                 </article>
             </main>
         )
