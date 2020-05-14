@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { cards } from "../assets/cards";
 import "../assets/css/board.css";
 import { Card } from "./Card";
+import { Link } from "react-router-dom";
 
 function Board() {
 
@@ -217,19 +218,22 @@ function Board() {
 
     let { HP, weapon, deck, room, lastSlain, hasRan } = data;
     console.log(deck);
+    room = [];
     if (HP <= 0) {
         return (
-            <main>
-                <p>YOU LOSE</p>
+            <main className="result">
+                <h1>YOU LOSE</h1>
                 <button onClick={()=>resetGame()}>Play Again?</button>
+                <Link to="/"><p>Main Menu</p></Link>
             </main>
         )
     } else if (room.length < 1) {
         return (
-            <main>
+            <main className="result">
                 <h1>You Win!</h1>
                 <p>Score: {HP}</p>
                 <button onClick={()=>resetGame()}>Play Again?</button>
+                <Link to="/"><p>Main Menu</p></Link>
             </main>
         )
     } else {
