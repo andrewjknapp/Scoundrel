@@ -3,6 +3,7 @@ import { Board } from './components/Board';
 import { BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import { HomeScreen } from './components/HomeScreen';
 import { Tutorial } from './components/Tutorial';
+import "../src/assets/css/app.css";
 
 function App() {
   return (
